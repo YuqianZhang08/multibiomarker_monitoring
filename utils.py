@@ -12,7 +12,6 @@ import sys
 class Logger(object):
     '''
     sys.stdout = Logger(r"print_log.txt")
-    使用指定Logger的输出位置
     '''
     def __init__(self, fileN="Default.log"):
         self.terminal = sys.stdout
@@ -23,7 +22,7 @@ class Logger(object):
         self.log.write(message)
 
     def flush(self):
-        # sys.stdout.flush()将控制台内容立即输入文件
+        # sys.stdout.flush()
         self.terminal.flush()
         self.log.flush()
 
@@ -98,12 +97,12 @@ class ConfusionMatrix(object):
     def update(self, a, b):
         n = self.num_classes
         if self.mat is None:
-            # 创建混淆矩阵
+            # 
             self.mat = torch.zeros((n, n), dtype=torch.int64, device=a.device)
         with torch.no_grad():
-            # 寻找预测为目标的像素索引
+            # 
             k = (a >= 0) & (a < n)
-            # 统计像素真实类别b[k]被预测成类别a[k]的个数(这里的做法很巧妙)
+           
             inds = n * a[k].to(torch.int64) + b[k]
             self.mat += torch.bincount(inds, minlength=n**2).reshape(n, n)
 
@@ -113,11 +112,11 @@ class ConfusionMatrix(object):
 
     def compute(self):
         h = self.mat.float()
-        # 计算全局预测准确率(混淆矩阵的对角线为预测正确的个数)
+    
         acc_global = torch.diag(h).sum() / h.sum()
-        # 计算每个类别的准确率
+        
         acc = torch.diag(h) / h.sum(1)
-        # 计算每个类别预测与真实目标的iou
+        
         iu = torch.diag(h) / (h.sum(1) + h.sum(0) - torch.diag(h))
         return acc_global, acc, iu
 
